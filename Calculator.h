@@ -15,7 +15,7 @@ private:
     void processInput(const std::string& input);
 public:
     Calculator();
-    ~Calculator() = default;
+    ~Calculator();
 
     void start();
 };
