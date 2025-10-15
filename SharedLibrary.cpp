@@ -22,6 +22,26 @@ SharedLibrary::~SharedLibrary() {
 #endif
 }
 
+SharedLibrary::SharedLibrary(SharedLibrary&& other) noexcept
+    : handle(other.handle), name(std::move(other.name)), func(std::move(other.func)) {
+    other.handle = nullptr;
+}
+
+SharedLibrary& SharedLibrary::operator=(SharedLibrary&& other) noexcept {
+    if (this != &other) {
+#ifdef _WIN32
+        if (handle) FreeLibrary((HMODULE)handle);
+#else
+        if (handle) dlclose(handle);
+#endif
+        handle = other.handle;
+        name = std::move(other.name);
+        func = std::move(other.func);
+        other.handle = nullptr;
+    }
+    return *this;
+}
+
 void SharedLibrary::load(const std::string& path) {
 #ifdef _WIN32
     handle = LoadLibraryA(path.c_str());

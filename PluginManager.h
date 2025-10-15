@@ -3,18 +3,22 @@
 #include <string>
 #include <map>
 #include <functional>
+#include <memory>
+#include <vector>
 
 class SharedLibrary;
 typedef std::function<double(double)> MathFunc;
 
 class PluginManager {
-private:
-    std::map<std::string, MathFunc> functions;
 public:
-    PluginManager() = default;
-    ~PluginManager() = default;
+    PluginManager();
+    ~PluginManager();
 
-    void load(const std::string &dirPath);
-    bool hasFunction(const std::string & name) const;
-    double call(const std::string & name, double arg);
+    bool load(const std::string& dirPath);
+    bool hasFunction(const std::string& name) const;
+    double call(const std::string& name, double arg);
+
+private:
+    std::vector<std::unique_ptr<SharedLibrary>> libraries;
+    std::map<std::string, MathFunc> functions;
 };
