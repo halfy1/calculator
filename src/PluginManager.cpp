@@ -28,7 +28,7 @@ bool PluginManager::load(const std::string& dirPath) {
         try {
             auto lib = std::make_unique<SharedLibrary>(dirPath + "\\" + filename);
             functions[lib->getName()] = lib->getFunc();
-            std::cout << "Loaded: " << lib->getName() << "\n";
+            // std::cout << "Loaded: " << lib->getName() << "\n";
             libraries.push_back(std::move(lib));
             loaded++;
         } catch (const std::exception& e) {
@@ -48,7 +48,7 @@ bool PluginManager::load(const std::string& dirPath) {
             try {
                 auto lib = std::make_unique<SharedLibrary>(dirPath + "/" + filename);
                 functions[lib->getName()] = lib->getFunc();
-                std::cout << "Loaded: " << lib->getName() << "\n";
+                // std::cout << "Loaded: " << lib->getName() << "\n";
                 libraries.push_back(std::move(lib));
                 loaded++;
             } catch (const std::exception& e) {

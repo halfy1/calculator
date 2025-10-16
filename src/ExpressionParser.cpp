@@ -1,21 +1,21 @@
 #include "ExpressionParser.h"
 #include "PluginManager.h"
-#include <iostream>
-#include <cmath>
 #include <cctype>
+#include <cmath>
+#include <stdexcept>
 
 ExpressionParser::ExpressionParser(PluginManager* pm) : pluginMgr(pm) {}
 
-double ExpressionParser::readNumber(const std::string& expr, size_t& i){
+double ExpressionParser::readNumber(const std::string& expr, size_t& i) {
     std::string num;
-    bool hasDot =  false;
-
+    bool hasDot = false;
+    
     while (i < expr.size()) {
         if (std::isdigit(expr[i])) {
-            num +=expr[i++];
+            num += expr[i++];
         } else if (expr[i] == '.' && !hasDot) {
             hasDot = true;
-            num +=expr[i++];
+            num += expr[i++];
         } else {
             break;
         }
@@ -24,11 +24,11 @@ double ExpressionParser::readNumber(const std::string& expr, size_t& i){
     if (num.empty() || num == ".") {
         throw std::runtime_error("Invalid number");
     }
-
+    
     return std::stod(num);
 }
 
-std::string ExpressionParser::readFunction(const std::string & expr, size_t &i){
+std::string ExpressionParser::readFunction(const std::string& expr, size_t& i) {
     std::string func;
     while (i < expr.size() && std::isalpha(expr[i])) {
         func += expr[i++];
@@ -39,32 +39,32 @@ std::string ExpressionParser::readFunction(const std::string & expr, size_t &i){
     return func;
 }
 
-int ExpressionParser::getPriority(const std::string &op) const {
+int ExpressionParser::getPriority(const std::string& op) const {
     if (op == "+" || op == "-") return 1;
     if (op == "*" || op == "/") return 2;
     if (op == "^") return 3;
-    return 0; 
+    return 0;
 }
 
-double ExpressionParser::applyOp(double a, double b, const std::string &op) {
+double ExpressionParser::applyOp(double a, double b, const std::string& op) {
     if (op == "+") return a + b;
     if (op == "-") return a - b;
     if (op == "*") return a * b;
     if (op == "/") {
-        if (b == 0) throw std::runtime_error("Division by zero");
+        if (std::fabs(b) < 1e-10) throw std::runtime_error("Division by zero");
         return a / b;
     }
-    if (op == "^") return std::pow(a,b);
+    if (op == "^") return std::pow(a, b);
     throw std::runtime_error("Unknown operator: " + op);
 }
 
-double ExpressionParser::parse(const std::string & expr) {
+double ExpressionParser::parse(const std::string& expr) {
     std::stack<double> nums;
     std::stack<std::string> ops;
     size_t i = 0;
 
     while (i < expr.size()) {
-        if (std::isspace(expr[i])){
+        if (std::isspace(expr[i])) {
             i++;
             continue;
         }
@@ -78,6 +78,7 @@ double ExpressionParser::parse(const std::string & expr) {
                 throw std::runtime_error("Expected '(' after function");
             }
             i++;
+            ops.push("(");
             ops.push(func);
         } else if (expr[i] == '(') {
             ops.push("(");
@@ -96,19 +97,26 @@ double ExpressionParser::parse(const std::string & expr) {
             }
             if (ops.empty()) throw std::runtime_error("Mismatched parentheses");
             ops.pop();
+
+            if (!ops.empty() && !binaryOps.count(ops.top()) && ops.top() != "(") {
+                std::string func = ops.top(); ops.pop();
+                double arg = nums.top(); nums.pop();
+                nums.push(pluginMgr->call(func, arg));
+            }
+
             i++;
         } else if (binaryOps.count(std::string(1, expr[i]))) {
             std::string op(1, expr[i++]);
-            while (!ops.empty() && ops.top() !="(" && binaryOps.count(ops.top()) &&
-                    getPriority(ops.top()) >= getPriority(op)) {
+            while (!ops.empty() && ops.top() != "(" && binaryOps.count(ops.top()) &&
+                   getPriority(ops.top()) >= getPriority(op)) {
                 std::string topOp = ops.top(); ops.pop();
                 double b = nums.top(); nums.pop();
                 double a = nums.top(); nums.pop();
-                nums.push(applyOp(a,b, topOp));
+                nums.push(applyOp(a, b, topOp));
             }
             ops.push(op);
         } else {
-            throw std::runtime_error(std::string("Unknown character") + expr[i]);
+            throw std::runtime_error(std::string("Unknown character: ") + expr[i]);
         }
     }
 

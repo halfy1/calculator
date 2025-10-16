@@ -1,17 +1,22 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.14)
 project(Calculator)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(calc
-    main.cpp
-    Calculator.cpp
-    ExpressionParser.cpp
-    PluginManager.cpp
-    SharedLibrary.cpp
+set(SOURCES
+    src/main.cpp
+    src/Calculator.cpp
+    src/ExpressionParser.cpp
+    src/PluginManager.cpp
+    src/SharedLibrary.cpp
 )
 
+add_executable(calc src/main.cpp ${SOURCES})
+target_include_directories(calc PRIVATE src)
 target_link_libraries(calc dl)
+
+
 
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/plugins)
 
@@ -25,3 +30,27 @@ foreach(plugin_src ${PLUGIN_SOURCES})
     )
     target_link_libraries(${plugin_name} m)
 endforeach()
+
+include(FetchContent)
+FetchContent_Declare(
+    googletest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG release-1.12.1
+)
+FetchContent_MakeAvailable(googletest)
+
+enable_testing()
+
+add_executable(tests
+    tests/test_parser.cpp
+    tests/test_calculator.cpp
+    tests/test_plugins.cpp
+    src/ExpressionParser.cpp
+    src/PluginManager.cpp
+    src/SharedLibrary.cpp
+)
+
+target_include_directories(tests PRIVATE src)
+target_link_libraries(tests gtest gtest_main dl)
+
+include(GoogleTest)
