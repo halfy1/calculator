@@ -7,6 +7,8 @@
     #include <dlfcn.h>
 #endif
 
+namespace calculator {
+
 typedef double (*ExecFunc)(double);
 typedef const char* (*GetNameFunc)();
 
@@ -80,5 +82,15 @@ void SharedLibrary::load(const std::string& path) {
 #endif
 
     name = getNameFunc();
-    func = execFunc;
+    func = [execFunc](double x) -> double {
+        try {
+            return execFunc(x);
+        } catch (const std::exception& e) {
+            throw std::runtime_error(e.what());
+        } catch (...) {
+            throw std::runtime_error("Unknown error in plugin");
+        }
+    };
+}
+
 }

@@ -2,6 +2,7 @@
 #include "ExpressionParser.h"
 #include "PluginManager.h"
 
+using namespace calculator;
 class ParserTest : public ::testing::Test {
 protected:
     void SetUp() override {

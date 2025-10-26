@@ -6,6 +6,8 @@
 #include <memory>
 #include <vector>
 
+namespace calculator {
+
 class SharedLibrary;
 typedef std::function<double(double)> MathFunc;
 
@@ -22,3 +24,5 @@ private:
     std::vector<std::unique_ptr<SharedLibrary>> libraries;
     std::map<std::string, MathFunc> functions;
 };
+
+}

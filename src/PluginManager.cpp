@@ -9,6 +9,8 @@
     #include <dirent.h>
 #endif
 
+namespace calculator {
+
 PluginManager::PluginManager() = default;
 
 PluginManager::~PluginManager() = default;
@@ -73,4 +75,6 @@ double PluginManager::call(const std::string& name, double arg) {
         throw std::runtime_error("Unknown function: " + name);
     }
     return it->second(arg);
+}
+
 }

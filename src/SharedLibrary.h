@@ -4,6 +4,8 @@
 #include <functional>
 #include <memory>
 
+namespace calculator {
+
 typedef std::function<double(double)> MathFunc;
 
 class SharedLibrary {
@@ -27,3 +29,5 @@ private:
 
     void load(const std::string& path);
 };
+
+}

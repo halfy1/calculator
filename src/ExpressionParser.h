@@ -5,6 +5,8 @@
 #include <set>
 #include "PluginManager.h"
 
+namespace calculator {
+
 class PluginManager;
 
 class ExpressionParser
@@ -23,3 +25,5 @@ public:
     ExpressionParser(PluginManager* pluginMgr);
     double parse(const std::string & expr);
 };
+
+}

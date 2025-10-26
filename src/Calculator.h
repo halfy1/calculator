@@ -3,6 +3,8 @@
 #include <memory>
 #include <string> 
 
+namespace calculator {
+
 class ExpressionParser;
 class PluginManager;
 
@@ -19,3 +21,5 @@ public:
 
     void start();
 };
+
+}

@@ -1,8 +1,7 @@
 #include "Calculator.h"
 
-using namespace std;
-int main(){
-    Calculator calc;
+int main() {
+    calculator::Calculator calc;
     calc.start();
     return 0;
 }

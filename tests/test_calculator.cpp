@@ -2,6 +2,8 @@
 #include "PluginManager.h"
 #include "ExpressionParser.h"
 
+using namespace calculator;
+
 class PluginManagerTest : public ::testing::Test {
 protected:
     PluginManager pluginMgr;

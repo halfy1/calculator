@@ -3,6 +3,8 @@
 #include "PluginManager.h"
 #include <cmath>
 
+using namespace calculator;
+
 class PluginTest : public ::testing::Test {
 protected:
     void SetUp() override {

@@ -4,6 +4,8 @@
 #include <iostream>
 #include <iomanip>
 
+namespace calculator {
+
 Calculator::Calculator()
     : pluginManager(std::make_unique<PluginManager>()),
       parser(std::make_unique<ExpressionParser>(pluginManager.get())) {
@@ -32,4 +34,6 @@ void Calculator::start() {
     while (std::getline(std::cin, input)) {
         processInput(input);
     }
+}
+
 }
