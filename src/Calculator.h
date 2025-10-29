@@ -19,6 +19,12 @@ public:
     Calculator();
     ~Calculator();
 
+    Calculator(const Calculator&) = delete;
+    Calculator& operator=(const Calculator&) = delete;
+
+    Calculator(Calculator&&) noexcept = default;
+    Calculator& operator=(Calculator &&) noexcept = default;
+
     void start();
 };
 
